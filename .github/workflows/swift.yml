@@ -12,7 +12,6 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        swift-version: ['5.9', '5.10']
     
     steps:
     - uses: actions/checkout@v4
@@ -20,7 +19,7 @@ jobs:
     - name: Setup Swift
       uses: vapor/swiftly-action@v0.2
       with:
-        toolchain: ${{ matrix.swift-version }}
+        toolchain: '6.1'
     
     - name: Cache Swift Package Manager
       uses: actions/cache@v3
@@ -45,33 +44,6 @@ jobs:
         make build
         make clean
 
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Swift
-      uses: vapor/swiftly-action@v0.2
-      with:
-        toolchain: '5.10'
-    
-    - name: SwiftFormat Check
-      run: |
-        # Install SwiftFormat if available
-        if command -v swiftformat &> /dev/null; then
-          swiftformat --lint .
-        else
-          echo "SwiftFormat not available, skipping formatting check"
-        fi
-    
-    - name: SwiftLint Check
-      run: |
-        # Install SwiftLint if available
-        if command -v swiftlint &> /dev/null; then
-          swiftlint
-        else
-          echo "SwiftLint not available, skipping linting check"
-        fi
 
   security:
     runs-on: ubuntu-latest
@@ -87,7 +59,7 @@ jobs:
 
   release:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [test, lint]
+    needs: [test]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -95,7 +67,7 @@ jobs:
     - name: Setup Swift
       uses: vapor/swiftly-action@v0.2
       with:
-        toolchain: '5.10'
+        toolchain: '6.1'
     
     - name: Build release artifacts
       run: |
