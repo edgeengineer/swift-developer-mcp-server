@@ -1,0 +1,124 @@
+name: Swift CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        swift-version: ['5.9', '5.10']
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Swift (Linux)
+      if: runner.os == 'Linux'
+      uses: swift-actions/setup-swift@v1
+      with:
+        swift-version: ${{ matrix.swift-version }}
+    
+    - name: Setup Swift (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        # macOS runners come with Swift pre-installed
+        swift --version
+    
+    - name: Cache Swift Package Manager
+      uses: actions/cache@v3
+      with:
+        path: .build
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+    
+    - name: Build
+      run: swift build -v
+    
+    - name: Run tests
+      run: swift test -v
+    
+    - name: Build release
+      run: swift build -c release
+    
+    - name: Test Makefile targets
+      run: |
+        make help
+        make build
+        make clean
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Swift
+      uses: swift-actions/setup-swift@v1
+      with:
+        swift-version: '5.10'
+    
+    - name: SwiftFormat Check
+      run: |
+        # Install SwiftFormat if available
+        if command -v swiftformat &> /dev/null; then
+          swiftformat --lint .
+        else
+          echo "SwiftFormat not available, skipping formatting check"
+        fi
+    
+    - name: SwiftLint Check
+      run: |
+        # Install SwiftLint if available
+        if command -v swiftlint &> /dev/null; then
+          swiftlint
+        else
+          echo "SwiftLint not available, skipping linting check"
+        fi
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Run security audit
+      run: |
+        # Check for known security vulnerabilities in dependencies
+        echo "Checking for security vulnerabilities..."
+        # This would typically use tools like swift-package-audit when available
+        echo "No security audit tools configured yet"
+
+  release:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [test, lint]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Swift
+      uses: swift-actions/setup-swift@v1
+      with:
+        swift-version: '5.10'
+    
+    - name: Build release artifacts
+      run: |
+        # Build for multiple platforms
+        swift build -c release
+        
+        # Create release directory
+        mkdir -p release
+        
+        # Copy binary and documentation
+        cp .build/release/SwiftDeveloperMCPServer release/
+        cp README.md release/
+        cp Makefile release/
+    
+    - name: Upload release artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: swift-developer-mcp-server-${{ github.sha }}
+        path: release/
