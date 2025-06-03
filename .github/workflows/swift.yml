@@ -17,17 +17,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Setup Swift (Linux)
-      if: runner.os == 'Linux'
-      uses: swift-actions/setup-swift@v1
+    - name: Setup Swift
+      uses: vapor/swiftly-action@v0.1.0
       with:
-        swift-version: ${{ matrix.swift-version }}
-    
-    - name: Setup Swift (macOS)
-      if: runner.os == 'macOS'
-      run: |
-        # macOS runners come with Swift pre-installed
-        swift --version
+        toolchain: ${{ matrix.swift-version }}
     
     - name: Cache Swift Package Manager
       uses: actions/cache@v3
@@ -58,9 +51,9 @@ jobs:
     - uses: actions/checkout@v4
     
     - name: Setup Swift
-      uses: swift-actions/setup-swift@v1
+      uses: vapor/swiftly-action@v0.1.0
       with:
-        swift-version: '5.10'
+        toolchain: '5.10'
     
     - name: SwiftFormat Check
       run: |
@@ -100,9 +93,9 @@ jobs:
     - uses: actions/checkout@v4
     
     - name: Setup Swift
-      uses: swift-actions/setup-swift@v1
+      uses: vapor/swiftly-action@v0.1.0
       with:
-        swift-version: '5.10'
+        toolchain: '5.10'
     
     - name: Build release artifacts
       run: |
