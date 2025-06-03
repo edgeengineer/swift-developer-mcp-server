@@ -193,13 +193,24 @@ swift-developer-mcp-server/
 ├── Makefile                     # Build automation and convenience targets
 ├── Sources/
 │   ├── main.swift               # Server entry point and MCP handler setup
-│   └── SwiftDeveloperTools.swift # Tool implementations
+│   ├── Utilities.swift          # Common types and helper functions
+│   ├── BuildTestTools.swift     # Swift build and test tools
+│   ├── DebugTools.swift         # Debug session management and tools
+│   ├── PackageInfoTools.swift   # Swift package information tools
+│   ├── SwiftlyTools.swift       # Swiftly toolchain management
+│   ├── Resources.swift          # MCP resources (project info, build status, etc.)
+│   └── Prompts.swift            # MCP prompts (debug session, build analysis)
 └── README.md                    # This file
 ```
 
 ### Adding New Tools
 
-1. Define the tool struct in `SwiftDeveloperTools.swift`
+1. Define the tool struct in the appropriate module file:
+   - `BuildTestTools.swift` for build and test functionality
+   - `DebugTools.swift` for debugging features
+   - `PackageInfoTools.swift` for package management
+   - `SwiftlyTools.swift` for toolchain management
+   - Create a new module if needed for other categories
 2. Add the tool to the `ListTools` handler in `main.swift`
 3. Add the tool's handle method to the `CallTool` switch statement
 4. Rebuild the server
@@ -231,7 +242,7 @@ Then send initialization and tool call messages via stdin.
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the Apache 2.0 License. See the LICENSE file for details.
 
 ## Troubleshooting
 

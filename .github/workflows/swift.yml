@@ -1,89 +1,30 @@
-name: Swift CI
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+# GitHub recommends pinning actions to a commit SHA.
+# To get a newer version, you will need to update the SHA.
+# You can also reference a tag or branch, but the action may change without warning.
+
+name: Swift
+
+on: [push]
 
 jobs:
-  test:
-    runs-on: ${{ matrix.os }}
+  build:
+    name: Swift ${{ matrix.swift }} on ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-    
+        swift: ["6.1"]
+    runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Swift
-      uses: vapor/swiftly-action@v0.2
-      with:
-        toolchain: '6.1'
-    
-    - name: Cache Swift Package Manager
-      uses: actions/cache@v3
-      with:
-        path: .build
-        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
-        restore-keys: |
-          ${{ runner.os }}-spm-
-    
-    - name: Build
-      run: swift build -v
-    
-    - name: Run tests
-      run: swift test -v
-    
-    - name: Build release
-      run: swift build -c release
-    
-    - name: Test Makefile targets
-      run: |
-        make help
-        make build
-        make clean
-
-
-  security:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Run security audit
-      run: |
-        # Check for known security vulnerabilities in dependencies
-        echo "Checking for security vulnerabilities..."
-        # This would typically use tools like swift-package-audit when available
-        echo "No security audit tools configured yet"
-
-  release:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [test]
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Swift
-      uses: vapor/swiftly-action@v0.2
-      with:
-        toolchain: '6.1'
-    
-    - name: Build release artifacts
-      run: |
-        # Build for multiple platforms
-        swift build -c release
-        
-        # Create release directory
-        mkdir -p release
-        
-        # Copy binary and documentation
-        cp .build/release/SwiftDeveloperMCPServer release/
-        cp README.md release/
-        cp Makefile release/
-    
-    - name: Upload release artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: swift-developer-mcp-server-${{ github.sha }}
-        path: release/
+      - uses: vapor/swiftly-action@65540b95f51493d65f5e59e97dcef9629ddf11bf
+        with:
+          toolchain: ${{ matrix.swift }}
+      - uses: actions/checkout@v4
+      - name: Build
+        run: swift build
+      - name: Run tests
+        run: swift test
