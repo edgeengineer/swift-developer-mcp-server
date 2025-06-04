@@ -6,7 +6,28 @@ import MCP
 public struct SwiftlyInstallTool {
     public static let tool = Tool(
         name: "swiftly_install",
-        description: "Install a Swift toolchain using swiftly"
+        description: "Install a Swift toolchain using swiftly",
+        inputSchema: [
+            "type": "object",
+            "properties": [
+                "version": [
+                    "type": "string",
+                    "description": "Version to install (required, e.g., '5.9', 'main', 'latest')"
+                ],
+                "channel": [
+                    "type": "string",
+                    "enum": ["release", "development", "nightly"],
+                    "description": "Channel to use",
+                    "default": "release"
+                ],
+                "force": [
+                    "type": "boolean",
+                    "description": "Force reinstall if already present",
+                    "default": false
+                ]
+            ],
+            "required": ["version"]
+        ]
     )
     
     public static func handle(arguments: [String: Value]) async throws -> CallTool.Result {
@@ -36,7 +57,22 @@ public struct SwiftlyInstallTool {
 public struct SwiftlyListTool {
     public static let tool = Tool(
         name: "swiftly_list",
-        description: "List installed Swift toolchains"
+        description: "List installed Swift toolchains",
+        inputSchema: [
+            "type": "object",
+            "properties": [
+                "include_system": [
+                    "type": "boolean",
+                    "description": "Include system toolchains",
+                    "default": true
+                ],
+                "show_paths": [
+                    "type": "boolean",
+                    "description": "Show installation paths",
+                    "default": false
+                ]
+            ]
+        ]
     )
     
     public static func handle(arguments: [String: Value]) async throws -> CallTool.Result {
@@ -61,7 +97,22 @@ public struct SwiftlyListTool {
 public struct SwiftlyListAvailableTool {
     public static let tool = Tool(
         name: "swiftly_list_available",
-        description: "List available Swift versions to install"
+        description: "List available Swift versions to install",
+        inputSchema: [
+            "type": "object",
+            "properties": [
+                "channel": [
+                    "type": "string",
+                    "enum": ["release", "development", "nightly"],
+                    "description": "Filter by channel (optional)"
+                ],
+                "latest_only": [
+                    "type": "boolean",
+                    "description": "Show only latest versions",
+                    "default": false
+                ]
+            ]
+        ]
     )
     
     public static func handle(arguments: [String: Value]) async throws -> CallTool.Result {
@@ -87,7 +138,26 @@ public struct SwiftlyListAvailableTool {
 public struct SwiftlyUseTool {
     public static let tool = Tool(
         name: "swiftly_use",
-        description: "Switch to a specific Swift version"
+        description: "Switch to a specific Swift version",
+        inputSchema: [
+            "type": "object",
+            "properties": [
+                "version": [
+                    "type": "string",
+                    "description": "Version to use (required)"
+                ],
+                "global": [
+                    "type": "boolean",
+                    "description": "Set as global default",
+                    "default": false
+                ],
+                "project_path": [
+                    "type": "string",
+                    "description": "Set for specific project only (optional)"
+                ]
+            ],
+            "required": ["version"]
+        ]
     )
     
     public static func handle(arguments: [String: Value]) async throws -> CallTool.Result {
@@ -113,7 +183,26 @@ public struct SwiftlyUseTool {
 public struct SwiftlyRunTool {
     public static let tool = Tool(
         name: "swiftly_run",
-        description: "Run a command with a specific Swift version"
+        description: "Run a command with a specific Swift version",
+        inputSchema: [
+            "type": "object",
+            "properties": [
+                "version": [
+                    "type": "string",
+                    "description": "Swift version to use (required)"
+                ],
+                "command": [
+                    "type": "string",
+                    "description": "Command to run (required)"
+                ],
+                "arguments": [
+                    "type": "array",
+                    "items": ["type": "string"],
+                    "description": "Arguments to pass to the command"
+                ]
+            ],
+            "required": ["version", "command"]
+        ]
     )
     
     public static func handle(arguments: [String: Value]) async throws -> CallTool.Result {
@@ -135,7 +224,22 @@ public struct SwiftlyRunTool {
 public struct SwiftlyUninstallTool {
     public static let tool = Tool(
         name: "swiftly_uninstall",
-        description: "Uninstall a Swift toolchain"
+        description: "Uninstall a Swift toolchain",
+        inputSchema: [
+            "type": "object",
+            "properties": [
+                "version": [
+                    "type": "string",
+                    "description": "Version to uninstall (required)"
+                ],
+                "force": [
+                    "type": "boolean",
+                    "description": "Force removal",
+                    "default": false
+                ]
+            ],
+            "required": ["version"]
+        ]
     )
     
     public static func handle(arguments: [String: Value]) async throws -> CallTool.Result {

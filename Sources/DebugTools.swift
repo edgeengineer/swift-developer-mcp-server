@@ -67,7 +67,26 @@ public struct Breakpoint: Sendable {
 public struct DebugStartTool {
     public static let tool = Tool(
         name: "debug_start",
-        description: "Start a debugging session"
+        description: "Start a debugging session",
+        inputSchema: [
+            "type": "object",
+            "properties": [
+                "target": [
+                    "type": "string",
+                    "description": "Target to debug (required)"
+                ],
+                "project_path": [
+                    "type": "string",
+                    "description": "Path to the Swift project (optional)"
+                ],
+                "arguments": [
+                    "type": "array",
+                    "items": ["type": "string"],
+                    "description": "Arguments to pass to the target"
+                ]
+            ],
+            "required": ["target"]
+        ]
     )
     
     public static func handle(arguments: [String: Value]) async throws -> CallTool.Result {
@@ -79,7 +98,7 @@ public struct DebugStartTool {
         let targetArguments = arguments["arguments"]?.arrayValue?.compactMap { $0.stringValue } ?? []
         let sessionId = "debug_\(UUID().uuidString)"
         
-        let session = await DebugSessionManager.shared.createSession(
+        let _ = await DebugSessionManager.shared.createSession(
             id: sessionId,
             target: target,
             projectPath: projectPath,
@@ -104,7 +123,29 @@ public struct DebugStartTool {
 public struct DebugSetBreakpointTool {
     public static let tool = Tool(
         name: "debug_set_breakpoint",
-        description: "Set a breakpoint"
+        description: "Set a breakpoint",
+        inputSchema: [
+            "type": "object",
+            "properties": [
+                "file_path": [
+                    "type": "string",
+                    "description": "Path to the Swift file (required)"
+                ],
+                "line_number": [
+                    "type": "integer",
+                    "description": "Line number for the breakpoint (required)"
+                ],
+                "condition": [
+                    "type": "string",
+                    "description": "Optional condition for the breakpoint"
+                ],
+                "session_id": [
+                    "type": "string",
+                    "description": "Debug session ID (optional, uses 'default' if not provided)"
+                ]
+            ],
+            "required": ["file_path", "line_number"]
+        ]
     )
     
     public static func handle(arguments: [String: Value]) async throws -> CallTool.Result {
@@ -138,7 +179,23 @@ public struct DebugSetBreakpointTool {
 public struct DebugStepTool {
     public static let tool = Tool(
         name: "debug_step",
-        description: "Step through code"
+        description: "Step through code",
+        inputSchema: [
+            "type": "object",
+            "properties": [
+                "session_id": [
+                    "type": "string",
+                    "description": "Debug session ID (required)"
+                ],
+                "step_type": [
+                    "type": "string",
+                    "enum": ["over", "into", "out"],
+                    "description": "Type of step",
+                    "default": "over"
+                ]
+            ],
+            "required": ["session_id"]
+        ]
     )
     
     public static func handle(arguments: [String: Value]) async throws -> CallTool.Result {
@@ -148,7 +205,7 @@ public struct DebugStepTool {
         
         let stepType = arguments["step_type"]?.stringValue ?? "over"
         
-        guard let session = await DebugSessionManager.shared.getSession(id: sessionId) else {
+        guard await DebugSessionManager.shared.getSession(id: sessionId) != nil else {
             throw ToolError.invalidInput("Debug session not found: \(sessionId)")
         }
         
@@ -167,7 +224,17 @@ public struct DebugStepTool {
 public struct DebugContinueTool {
     public static let tool = Tool(
         name: "debug_continue",
-        description: "Continue execution"
+        description: "Continue execution",
+        inputSchema: [
+            "type": "object",
+            "properties": [
+                "session_id": [
+                    "type": "string",
+                    "description": "Debug session ID (required)"
+                ]
+            ],
+            "required": ["session_id"]
+        ]
     )
     
     public static func handle(arguments: [String: Value]) async throws -> CallTool.Result {
@@ -194,7 +261,25 @@ public struct DebugContinueTool {
 public struct DebugInspectVariableTool {
     public static let tool = Tool(
         name: "debug_inspect_variable",
-        description: "Inspect variables"
+        description: "Inspect variables",
+        inputSchema: [
+            "type": "object",
+            "properties": [
+                "session_id": [
+                    "type": "string",
+                    "description": "Debug session ID (required)"
+                ],
+                "variable_name": [
+                    "type": "string",
+                    "description": "Name of the variable to inspect (optional)"
+                ],
+                "expression": [
+                    "type": "string",
+                    "description": "Expression to evaluate (optional)"
+                ]
+            ],
+            "required": ["session_id"]
+        ]
     )
     
     public static func handle(arguments: [String: Value]) async throws -> CallTool.Result {
@@ -205,7 +290,7 @@ public struct DebugInspectVariableTool {
         let variableName = arguments["variable_name"]?.stringValue
         let expression = arguments["expression"]?.stringValue
         
-        guard let session = await DebugSessionManager.shared.getSession(id: sessionId) else {
+        guard await DebugSessionManager.shared.getSession(id: sessionId) != nil else {
             throw ToolError.invalidInput("Debug session not found: \(sessionId)")
         }
         

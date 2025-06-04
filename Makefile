@@ -51,6 +51,17 @@ path: build
 	@echo '  }'
 	@echo '}'
 	@echo ""
+	@echo "Windsurf (.windsurf/mcp_servers.json):"
+	@echo '{'
+	@echo '  "servers": {'
+	@echo '    "swift-developer": {'
+	@echo '      "command": "$(shell pwd)/$(EXECUTABLE_PATH)",'
+	@echo '      "args": [],'
+	@echo '      "env": {}'
+	@echo '    }'
+	@echo '  }'
+	@echo '}'
+	@echo ""
 	@echo "Claude Desktop (~/.config/claude/claude_desktop_config.json):"
 	@echo '{'
 	@echo '  "mcpServers": {'

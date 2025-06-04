@@ -6,7 +6,31 @@ import MCP
 public struct SwiftBuildTool {
     public static let tool = Tool(
         name: "swift_build",
-        description: "Build your Swift project"
+        description: "Build your Swift project",
+        inputSchema: [
+            "type": "object",
+            "properties": [
+                "project_path": [
+                    "type": "string",
+                    "description": "Path to the Swift project (optional, defaults to current directory)"
+                ],
+                "configuration": [
+                    "type": "string",
+                    "enum": ["debug", "release"],
+                    "description": "Build configuration",
+                    "default": "debug"
+                ],
+                "target": [
+                    "type": "string",
+                    "description": "Specific target to build (optional, builds all if not specified)"
+                ],
+                "verbose": [
+                    "type": "boolean",
+                    "description": "Enable verbose output",
+                    "default": false
+                ]
+            ]
+        ]
     )
     
     public static func handle(arguments: [String: Value]) async throws -> CallTool.Result {
@@ -39,7 +63,30 @@ public struct SwiftBuildTool {
 public struct SwiftTestTool {
     public static let tool = Tool(
         name: "swift_test",
-        description: "Run Swift tests"
+        description: "Run Swift tests",
+        inputSchema: [
+            "type": "object",
+            "properties": [
+                "project_path": [
+                    "type": "string",
+                    "description": "Path to the Swift project (optional)"
+                ],
+                "test_filter": [
+                    "type": "string",
+                    "description": "Filter tests by name pattern (optional)"
+                ],
+                "parallel": [
+                    "type": "boolean",
+                    "description": "Run tests in parallel",
+                    "default": true
+                ],
+                "verbose": [
+                    "type": "boolean",
+                    "description": "Enable verbose output",
+                    "default": false
+                ]
+            ]
+        ]
     )
     
     public static func handle(arguments: [String: Value]) async throws -> CallTool.Result {
@@ -71,7 +118,26 @@ public struct SwiftTestTool {
 public struct RunTargetTool {
     public static let tool = Tool(
         name: "run_target",
-        description: "Run a specific executable target"
+        description: "Run a specific executable target",
+        inputSchema: [
+            "type": "object",
+            "properties": [
+                "target": [
+                    "type": "string",
+                    "description": "Name of the target to run (required)"
+                ],
+                "project_path": [
+                    "type": "string",
+                    "description": "Path to the Swift project (optional)"
+                ],
+                "arguments": [
+                    "type": "array",
+                    "items": ["type": "string"],
+                    "description": "Command line arguments to pass"
+                ]
+            ],
+            "required": ["target"]
+        ]
     )
     
     public static func handle(arguments: [String: Value]) async throws -> CallTool.Result {

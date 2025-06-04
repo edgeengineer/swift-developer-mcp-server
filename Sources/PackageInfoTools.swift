@@ -6,7 +6,16 @@ import MCP
 public struct GetPackageInfoTool {
     public static let tool = Tool(
         name: "get_package_info",
-        description: "Get Swift package information"
+        description: "Get Swift package information",
+        inputSchema: [
+            "type": "object",
+            "properties": [
+                "package_path": [
+                    "type": "string",
+                    "description": "Path to the Swift package (optional)"
+                ]
+            ]
+        ]
     )
     
     public static func handle(arguments: [String: Value]) async throws -> CallTool.Result {
@@ -32,7 +41,26 @@ public struct GetPackageInfoTool {
 public struct PrintDependencyPublicAPITool {
     public static let tool = Tool(
         name: "print_dependency_public_api",
-        description: "Print the public API of a dependency"
+        description: "Print the public API of a dependency",
+        inputSchema: [
+            "type": "object",
+            "properties": [
+                "dependency_name": [
+                    "type": "string",
+                    "description": "Name of the dependency (required)"
+                ],
+                "package_path": [
+                    "type": "string",
+                    "description": "Path to the Swift package (optional)"
+                ],
+                "verbose": [
+                    "type": "boolean",
+                    "description": "Enable verbose output",
+                    "default": false
+                ]
+            ],
+            "required": ["dependency_name"]
+        ]
     )
     
     public static func handle(arguments: [String: Value]) async throws -> CallTool.Result {
