@@ -72,6 +72,9 @@ path: build
 	@echo '    }'
 	@echo '  }'
 	@echo '}'
+	@echo ""
+	@echo "Claude Code (Terminal Application):"
+	@echo "claude mcp add swift-developer $(shell pwd)/$(EXECUTABLE_PATH)"
 
 # Clean build artifacts
 clean:

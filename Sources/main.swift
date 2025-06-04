@@ -23,6 +23,7 @@ func main() async throws {
                 DebugStepTool.tool,
                 DebugContinueTool.tool,
                 DebugInspectVariableTool.tool,
+                DebugTerminateTool.tool,
                 GetPackageInfoTool.tool,
                 PrintDependencyPublicAPITool.tool,
                 SwiftlyInstallTool.tool,
@@ -47,6 +48,7 @@ func main() async throws {
             case "debug_step": return try await DebugStepTool.handle(arguments: arguments)
             case "debug_continue": return try await DebugContinueTool.handle(arguments: arguments)
             case "debug_inspect_variable": return try await DebugInspectVariableTool.handle(arguments: arguments)
+            case "debug_terminate": return try await DebugTerminateTool.handle(arguments: arguments)
             case "get_package_info": return try await GetPackageInfoTool.handle(arguments: arguments)
             case "print_dependency_public_api": return try await PrintDependencyPublicAPITool.handle(arguments: arguments)
             case "swiftly_install": return try await SwiftlyInstallTool.handle(arguments: arguments)

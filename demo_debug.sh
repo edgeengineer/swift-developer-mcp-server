@@ -1,0 +1,60 @@
+#!/bin/bash
+
+echo "🐛 MCP Server Debug Functionality Demo"
+echo "======================================"
+
+echo ""
+echo "1. Testing debug_start (this would normally create an LLDB session)"
+echo "   Command: debug_start ExampleApp /path/to/ExampleLib"
+echo "   Expected: Session created, target built, LLDB started"
+
+echo ""
+echo "2. Testing debug_set_breakpoint"
+echo "   Command: debug_set_breakpoint main.swift 42"
+echo "   Expected: Breakpoint set at line 42 in main.swift"
+
+echo ""
+echo "3. Testing debug_continue"
+echo "   Command: debug_continue session_id"
+echo "   Expected: Program starts execution until breakpoint"
+
+echo ""
+echo "4. Testing debug_step"
+echo "   Command: debug_step session_id over"
+echo "   Expected: Steps over current line"
+
+echo ""
+echo "5. Testing debug_inspect_variable"
+echo "   Command: debug_inspect_variable session_id calculator"
+echo "   Expected: Shows calculator variable state"
+
+echo ""
+echo "6. Testing debug_terminate"
+echo "   Command: debug_terminate session_id"
+echo "   Expected: Clean session termination"
+
+echo ""
+echo "📝 Key Features Implemented:"
+echo "✅ Real LLDB process integration"
+echo "✅ Automatic target building"
+echo "✅ Interactive debugging commands"
+echo "✅ Variable inspection"
+echo "✅ Breakpoint management"
+echo "✅ Session lifecycle management"
+echo "✅ Error handling and cleanup"
+
+echo ""
+echo "🎯 Perfect for debugging:"
+echo "- ExampleLib's async Fibonacci calculations"
+echo "- Actor state inspection"
+echo "- Concurrent execution flow"
+echo "- Cache behavior analysis"
+echo "- Performance bottleneck identification"
+
+echo ""
+echo "🚀 To test with real MCP client:"
+echo "1. Start the MCP server: swift run SwiftDeveloperMCPServer"
+echo "2. Connect with MCP client"
+echo "3. Use debug_start with ExampleApp target"
+echo "4. Set breakpoints in performanceTest function"
+echo "5. Inspect calculator actor state during execution"

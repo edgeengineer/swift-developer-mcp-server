@@ -5,6 +5,7 @@ import MCP
 
 public enum ToolError: Swift.Error {
     case invalidInput(String)
+    case processingError(String)
 }
 
 // MARK: - Process Execution
